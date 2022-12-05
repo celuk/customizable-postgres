@@ -10,6 +10,9 @@ CC=gcc
 ## You can add desired compiler flags here
 CFLAGS="-fno-omit-frame-pointer -rdynamic -pg -O0"
 
+## Postgres main library directory
+POSTGRESPATH="postgres"
+
 ## Postgres install directory after built, give it full path
 PINSTALLDIR="$PWD/build" #"/home/guest/poslib/postgres-compiled"
 
@@ -22,6 +25,8 @@ MAINF="custom"
 EXTRACTF="" #"tuplesort"
 
 OBJECTS=""
+
+pushd "$POSTGRESPATH";
 
 CFLAGS="$CFLAGS" ./configure --prefix=$PINSTALLDIR --enable-debug;
 make;
@@ -36,7 +41,9 @@ while read eachObject; do
 	OBJECTS+=" ${eachObject} "
 done <<< "$(find "$PWD/src/backend" -name "*.o")"
 
-$CC -Wall -Wmissing-prototypes -Wpointer-arith -Wdeclaration-after-statement -Werror=vla -Wendif-labels -Wmissing-format-attribute -Wimplicit-fallthrough=3 -Wcast-function-type -Wshadow=compatible-local -Wformat-security -fno-strict-aliasing -fwrapv -fexcess-precision=standard -Wno-format-truncation -Wno-stringop-truncation -g $CFLAGS -I./src -I./src/include  -D_GNU_SOURCE -c -o ${MAINF}.o ${MAINF}.c;
+popd;
 
-$CC -Wall -Wmissing-prototypes -Wpointer-arith -Wdeclaration-after-statement -Werror=vla -Wendif-labels -Wmissing-format-attribute -Wimplicit-fallthrough=3 -Wcast-function-type -Wshadow=compatible-local -Wformat-security -fno-strict-aliasing -fwrapv -fexcess-precision=standard -Wno-format-truncation -Wno-stringop-truncation -g $CFLAGS $OBJECTS ./src/timezone/localtime.o ./src/timezone/pgtz.o ./src/timezone/strftime.o ${MAINF}.o ./src/common/libpgcommon_srv.a ./src/port/libpgport_srv.a -L./src/port -L./src/common -Wl,--as-needed -Wl,-rpath,'${PINSTALLDIR}/lib',--enable-new-dtags -Wl,-E -lz -lpthread -lrt -ldl -lm -o $MAINF;
+$CC -Wall -Wmissing-prototypes -Wpointer-arith -Wdeclaration-after-statement -Werror=vla -Wendif-labels -Wmissing-format-attribute -Wimplicit-fallthrough=3 -Wcast-function-type -Wshadow=compatible-local -Wformat-security -fno-strict-aliasing -fwrapv -fexcess-precision=standard -Wno-format-truncation -Wno-stringop-truncation -g $CFLAGS -I${POSTGRESPATH}/src -I${POSTGRESPATH}/src/include  -D_GNU_SOURCE -c -o ${MAINF}.o ${MAINF}.c;
+
+$CC -Wall -Wmissing-prototypes -Wpointer-arith -Wdeclaration-after-statement -Werror=vla -Wendif-labels -Wmissing-format-attribute -Wimplicit-fallthrough=3 -Wcast-function-type -Wshadow=compatible-local -Wformat-security -fno-strict-aliasing -fwrapv -fexcess-precision=standard -Wno-format-truncation -Wno-stringop-truncation -g $CFLAGS $OBJECTS ${POSTGRESPATH}/src/timezone/localtime.o ${POSTGRESPATH}/src/timezone/pgtz.o ${POSTGRESPATH}/src/timezone/strftime.o ${MAINF}.o ${POSTGRESPATH}/src/common/libpgcommon_srv.a ${POSTGRESPATH}/src/port/libpgport_srv.a -L${POSTGRESPATH}/src/port -L${POSTGRESPATH}/src/common -Wl,--as-needed -Wl,-rpath,'${PINSTALLDIR}/lib',--enable-new-dtags -Wl,-E -lz -lpthread -lrt -ldl -lm -o $MAINF;
 
