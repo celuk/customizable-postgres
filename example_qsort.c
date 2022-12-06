@@ -1,3 +1,5 @@
+// Author: Seyyid Hikmet Celik
+
 // You need to run this code after compile as 
 // ./example_qsort datasets/big-postgres.dataset 256000
 
