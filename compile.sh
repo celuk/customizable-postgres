@@ -28,7 +28,7 @@ OBJECTS=""
 
 pushd "$POSTGRESPATH";
 
-CFLAGS="$CFLAGS" ./configure --prefix=$PINSTALLDIR --enable-debug;
+CFLAGS="$CFLAGS" CC="$CC" ./configure --prefix=$PINSTALLDIR --enable-debug;
 make;
 make install;
 
