@@ -29,8 +29,8 @@ OBJECTS=""
 pushd "$POSTGRESPATH";
 
 CFLAGS="$CFLAGS" CC="$CC" ./configure --prefix=$PINSTALLDIR --enable-debug;
-make;
-make install;
+make $CC;
+make install $CC;
 
 while read eachObject; do
 	if [[ $eachObject == */main.o || $eachObject == */${EXTRACTF}.o || $eachObject == */libpqwalreceiver.o || $eachObject == */pgoutput.o || $eachObject == *"utils/mb/conversion_procs"* ]]
